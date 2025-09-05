@@ -1,8 +1,10 @@
-# AI-Ready Knowledge Base Cataloging System
+# 🧠 hum-ai-catalogr
 
-An intelligent document cataloging system that transforms unstructured document collections into AI-ready knowledge bases using LLM-powered metadata extraction and standardized taxonomies.
+## AI-Ready Knowledge Base Cataloging System
 
-Originally developed for the **AI-Assisted Needs Assessment Assistant (AINAA)** project, part of the ELRHA/UKHIH funded "AI Solutions for Humanitarian Challenges" initiative. This system addresses a critical bottleneck in AI development: creating structured, high-quality metadata for large document collections.
+hum-ai-catalogr is an intelligent document cataloging system that transforms unstructured humanitarian document collections into structured, AI-ready knowledge bases. It leverages LLM-powered metadata extraction and standardized taxonomies to support fine-tuning, retrieval-augmented generation (RAG), and grounded AI applications.
+
+Originally developed as part of the **AI-Assisted Needs Assessment Assistant (AINAA)** project under the ELRHA / UKHIH “AI Solutions for Humanitarian Challenges” initiative, this tool addresses a critical bottleneck in AI development: curating structured, high-quality metadata for diverse and fragmented humanitarian knowledge sources.
 
 ## Why This Matters
 
