@@ -8,6 +8,7 @@
 01_Cross_Cutting_Standards/*.doc
 01_Cross_Cutting_Standards/*.xlsx
 01_Cross_Cutting_Standards/*.XLSX
+01_Cross_Cutting_Standards/*.xls
 01_Cross_Cutting_Standards/*.as
 01_Cross_Cutting_Standards/*.zip
 01_Cross_Cutting_Standards/*.html
@@ -19,6 +20,7 @@
 02_Sector_Standards_Policies/**/*.doc
 02_Sector_Standards_Policies/**/*.xlsx
 02_Sector_Standards_Policies/**/*.XLSX
+02_Sector_Standards_Policies/**/*.xls
 02_Sector_Standards_Policies/**/*.as
 02_Sector_Standards_Policies/**/*.zip
 02_Sector_Standards_Policies/**/*.html
@@ -30,6 +32,7 @@
 03_Cross_Cutting_Assessment_Guidelines_Tools/**/*.doc
 03_Cross_Cutting_Assessment_Guidelines_Tools/**/*.xlsx
 03_Cross_Cutting_Assessment_Guidelines_Tools/**/*.XLSX
+03_Cross_Cutting_Assessment_Guidelines_Tools/**/*.xls
 03_Cross_Cutting_Assessment_Guidelines_Tools/**/*.as
 03_Cross_Cutting_Assessment_Guidelines_Tools/**/*.zip
 03_Cross_Cutting_Assessment_Guidelines_Tools/**/*.html
@@ -41,6 +44,7 @@
 04_Sector_Assessment_Guidelines_Tools/**/*.doc
 04_Sector_Assessment_Guidelines_Tools/**/*.xlsx
 04_Sector_Assessment_Guidelines_Tools/**/*.XLSX
+04_Sector_Assessment_Guidelines_Tools/**/*.xls
 04_Sector_Assessment_Guidelines_Tools/**/*.as
 04_Sector_Assessment_Guidelines_Tools/**/*.zip
 04_Sector_Assessment_Guidelines_Tools/**/*.html
@@ -52,6 +56,7 @@
 05_Gold_Standard_Examples/**/*.doc
 05_Gold_Standard_Examples/**/*.xlsx
 05_Gold_Standard_Examples/**/*.XLSX
+05_Gold_Standard_Examples/**/*.xls
 05_Gold_Standard_Examples/**/*.as
 05_Gold_Standard_Examples/**/*.zip
 05_Gold_Standard_Examples/**/*.html
