@@ -1,7 +1,8 @@
 # Document Cataloger .gitignore
 
-# Sensitive/Private Documents - Knowledge Base Structure (01-05)
+# Sensitive/Private Documents - Governance and Knowledge Base Structure (00-05)
 # Keep folder structure visible but exclude actual document files
+00_Governance/*.csv
 01_Cross_Cutting_Standards/*.pdf
 01_Cross_Cutting_Standards/*.docx
 01_Cross_Cutting_Standards/*.doc
@@ -65,11 +66,6 @@
 04_Sector_Assessment_Guidelines_Tools/**/*.ppt*
 05_Gold_Standard_Examples/**/*.ppt*
 
-# Generated Catalogs (may contain sensitive metadata)
-kb_catalog*.csv
-catalog/
-**/catalog.csv
-00_Governance/kb_catalog_backup.csv
 
 # Python
 __pycache__/

@@ -588,7 +588,7 @@ def main():
     import sys
     
     # Configuration
-    KB_PATH = "/Users/jennifermajer/Documents/IMC/OneDrive Files/Global Projects/AI ELRHA Phase II/Knowledge Base"
+    KB_PATH = os.path.dirname(os.path.abspath(__file__))  # Current directory by default
     OLLAMA_URL = "http://localhost:11434"
     MODEL = "llama3.2:3b"  # Change to your preferred model
     

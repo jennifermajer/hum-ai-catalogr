@@ -1,0 +1,4 @@
+# This folder contains the actual catalog
+# Document is excluded from git during development
+# See examples folder for catalog template
+# See .gitignore for details

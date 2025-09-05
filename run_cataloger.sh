@@ -4,7 +4,8 @@
 # Automatically uses the correct Python version
 #
 
-KB_DIR="/Users/jennifermajer/Documents/IMC/OneDrive Files/Global Projects/AI ELRHA Phase II/Knowledge Base"
+# Get the directory where this script is located
+KB_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 echo "Document Cataloging System"
 echo "=========================="
