@@ -1,0 +1,7 @@
+# This folder contains internal example documents and case studies
+# Documents are excluded from git for security/licensing reasons
+# See .gitignore for details
+#
+# Structure shows distinction between:
+# - Internal_Examples: Organization-specific materials  
+# - External_Examples: Publicly available samples

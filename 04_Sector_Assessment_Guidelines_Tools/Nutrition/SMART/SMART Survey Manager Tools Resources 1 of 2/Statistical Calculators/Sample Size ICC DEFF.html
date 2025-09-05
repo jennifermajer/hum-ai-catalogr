@@ -1,0 +1,1057 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0042)http://users.aol.com/johnp71/proppowr.html -->
+<HTML xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns="http://www.w3.org/TR/REC-html40"><HEAD><TITLE>OpenEpi -- Sample Size Calculation for Cross-Sectional, Cohort, and Clinical Trials</TITLE>
+<META http-equiv=Content-Type content="text/html; charset=windows-1252">
+<META http-equiv=PICS-Label 
+content='(PICS-1.0 "http://www.classify.org/safesurf/" l on "1996.08.22T13:41+0000 r (SS~~000 1)'>
+<SCRIPT language=LiveScript>
+<!-- hide this script tag's contents from old browsers
+
+var Za1;var Za2;var clustersize; var ICCfinal; var avgpercluster; var DEFFfinal; var deff20;
+var Pi=Math.PI; var PiD2=Pi/2; var PiD4=Pi/4; var Pi2=2*Pi;
+
+function Norm(z) {
+z=Math.abs(z);
+var p=1+ z*(0.04986735+ z*(0.02114101+ z*(0.00327763+ z*(0.0000380036+ z*(0.0000488906+ z*0.000005383)))));
+p=p*p; p=p*p; p=p*p;
+return 1/(p*p);
+}
+
+function ANorm(p) { var v=0.5; var dv=0.5; var z=0;
+while(dv>1e-6) { z=1/v-1; dv=dv/2; if(Norm(z)>p) { v=v-dv } else { v=v+dv } };
+return z;
+}
+
+
+function Calc(form) {
+//reset calculated values to blank;
+form.ICCfinal.value = '';
+form.DEFFfinal.value = '';
+
+//make sure the total population size is numeric value and in range;
+if(isNaN(parseFloat(form.N_totpop.value))) {
+  alert("The target population size must be a numeric value.");
+  return;
+  }
+var N_totpop   =eval(form.N_totpop.value);
+if (N_totpop <= 10 || N_totpop >= 100000000000) {
+   N_totpop = Number.NaN
+   alert("The target population size must be greater than 10 and less than 100 billion.")
+  return;
+  } 
+
+//make sure the percentage with outcome is a numeric value and in range;
+if(isNaN(parseFloat(form.proportion.value))) {
+  alert("The estimated percentage in the target population with the event of interest must be a numeric value.");
+  return;
+  }
+var proportion   =eval(form.proportion.value);
+if (proportion <= 0 || proportion >= 100) {
+   proportion = Number.NaN
+   alert("The estimated percentage in the target population with the event of interest must be greater than 0.0% and less than 100%.")
+  return;
+  } 
+
+//make sure the confidence interval width (i.e., precision) is a numeric value and in range;
+if(isNaN(parseFloat(form.d_precision.value))) {
+  alert("The confidence interval width must be a numeric value.");
+  return;
+  }
+var d_precision  =eval(form.d_precision.value);
+if (d_precision <= 0 || d_precision >= 50) {
+   d_precision = Number.NaN
+   alert("The confidence interval width must be greater than 0.0% and less than 50%.")
+  return;
+  } 
+
+//make sure the confidence coefficient is a numeric value and in range;
+if(isNaN(parseFloat(form.cl.value))) {
+  alert("The confidence coefficient width must be a numeric value.");
+  return;
+  }
+var cl  =eval(form.cl.value);
+if (cl <= 0 || cl >= 100) {
+   cl = Number.NaN
+   alert("The confidence coefficient width must be greater than 0.0% and less than 100%.")
+  return;
+  } 
+
+//make sure the ICC is numeric and in range;
+//if(isNaN(parseFloat(form.ICC.value))) {
+// alert("The ICC must be a numeric value.");
+//  return;
+//  }
+var ICC  =eval(form.ICC.value);
+if (ICC <= -1 || ICC > 1) {
+   ICC = Number.NaN
+   alert("The ICC must be greater than -1 and less than or equalt to 1.")
+  return;
+  } 
+
+//make sure the deff is numeric and in range;
+//if(isNaN(parseFloat(form.deff.value))) {
+//  alert("The estimated DEFF must be a numeric value.");
+//  return;
+//  }
+
+var deff  =eval(form.deff.value);
+if (deff != 0 && deff < 0.5 || deff > 30) {
+   deff = Number.NaN
+   alert("The estimated DEFF must be between 0.5 and 30.")
+  return;
+  } 
+
+
+var avgpercluster  =eval(form.avgpercluster.value);
+if (avgpercluster < 1 || avgpercluster > 1000) {
+   deff = Number.NaN
+   alert("The average number of observations per cluster must be between 1 and 1000.")
+  return;
+  } 
+
+//need to double check that icc OR deff & avg cluster size entered;
+
+
+if (ICC != 0) {
+  ICCfinal = ICC;
+  DEFFfinal = 1 + (29) * ICCfinal;
+  }
+
+if (deff != 0) {
+  ICCfinal = (deff - 1)/(avgpercluster-1);
+  DEFFfinal = 1 + (29) * ICCfinal;
+  }
+  
+form.ICCfinal.value= ICCfinal;
+form.DEFFfinal.value = DEFFfinal;
+
+var Za1=(100-cl)/100;
+Za2=ANorm(Za1);
+
+
+//**********NOTE: switch to t-value***************cannot do this - the number of clusters is calculated after the sample size;
+//Change made Feb 21 2007 - actually, you can account for t - once you've calculated the sample size using 1.96 and have ;
+// decided on the number of clusters, multiply the sample size by the t-value^2 / z-value^2 for a multiplier of the size.;
+
+//10 observations per cluster ;
+//var DEFF10 = 1 + (10 - 1) * ICCfinal;
+//form.deff_10.value = DEFF10;
+//tot_sample_size10 = (DEFF10*N_totpop*(proportion/100)*(1-(proportion/100)))/((((d_precision/100) * (d_precision/100))/(Za2 * Za2))*(N_totpop - 1) + ((proportion/100) * (1 - (proportion/100))));
+//form.no_clusters10.value = ''+Math.ceil(tot_sample_size10/10);
+//form.tot_sample_size10.value = 10 * Math.ceil(tot_sample_size10/10);
+
+//10 observations per cluster - using t adjustment;
+var DEFF10 = 1 + (10 - 1) * ICCfinal;
+form.deff_10.value = DEFF10;
+tot_sample_size10 = (DEFF10*N_totpop*(proportion/100)*(1-(proportion/100)))/((((d_precision/100) * (d_precision/100))/(Za2 * Za2))*(N_totpop - 1) + ((proportion/100) * (1 - (proportion/100))));
+no_clusters10 = ''+Math.ceil(tot_sample_size10/10);
+var tvalue = AStudT(.05,no_clusters10-1);
+tot_sample_size10=((tvalue*tvalue) / (Za2*Za2)) * tot_sample_size10 ;
+form.no_clusters10.value = ''+Math.ceil(tot_sample_size10/10);
+form.tot_sample_size10.value = 10 * Math.ceil(tot_sample_size10/10);
+
+
+
+//11 observations per cluster ;
+var DEFF11 = 1 + (11 - 1) * ICCfinal;
+form.deff_11.value = DEFF11;
+tot_sample_size11 = (DEFF11*N_totpop*(proportion/100)*(1-(proportion/100)))/((((d_precision/100) * (d_precision/100))/(Za2 * Za2))*(N_totpop - 1) + ((proportion/100) * (1 - (proportion/100))));
+no_clusters11 = ''+Math.ceil(tot_sample_size11/11);
+var tvalue = AStudT(.05,no_clusters11-1);
+tot_sample_size11=((tvalue*tvalue) / (Za2*Za2)) * tot_sample_size11 ;
+form.no_clusters11.value = ''+Math.ceil(tot_sample_size11/11);
+form.tot_sample_size11.value = 11 * Math.ceil(tot_sample_size11/11);
+
+//KEVIN - need to complete the adjustment to the rest below;
+
+//12 observations per cluster ;
+var DEFF12 = 1 + (12 - 1) * ICCfinal;
+form.deff_12.value = DEFF12;
+tot_sample_size12 = (DEFF12*N_totpop*(proportion/100)*(1-(proportion/100)))/((((d_precision/100) * (d_precision/100))/(Za2 * Za2))*(N_totpop - 1) + ((proportion/100) * (1 - (proportion/100))));
+no_clusters12 = ''+Math.ceil(tot_sample_size12/12);
+var tvalue = AStudT(.05,no_clusters12-1);
+tot_sample_size12=((tvalue*tvalue) / (Za2*Za2)) * tot_sample_size12 ;
+form.no_clusters12.value = ''+Math.ceil(tot_sample_size12/12);
+form.tot_sample_size12.value = 12 * Math.ceil(tot_sample_size12/12);
+
+//13 observations per cluster ;
+var DEFF13 = 1 + (13 - 1) * ICCfinal;
+form.deff_13.value = DEFF13;
+tot_sample_size13 = (DEFF13*N_totpop*(proportion/100)*(1-(proportion/100)))/((((d_precision/100) * (d_precision/100))/(Za2 * Za2))*(N_totpop - 1) + ((proportion/100) * (1 - (proportion/100))));
+no_clusters13 = ''+Math.ceil(tot_sample_size13/13);
+var tvalue = AStudT(.05,no_clusters13-1);
+tot_sample_size13=((tvalue*tvalue) / (Za2*Za2)) * tot_sample_size13 ;
+form.no_clusters13.value = ''+Math.ceil(tot_sample_size13/13);
+form.tot_sample_size13.value = 13 * Math.ceil(tot_sample_size13/13);
+
+//14 observations per cluster ;
+var DEFF14 = 1 + (14 - 1) * ICCfinal;
+form.deff_14.value = DEFF14;
+tot_sample_size14 = (DEFF14*N_totpop*(proportion/100)*(1-(proportion/100)))/((((d_precision/100) * (d_precision/100))/(Za2 * Za2))*(N_totpop - 1) + ((proportion/100) * (1 - (proportion/100))));
+no_clusters14 = ''+Math.ceil(tot_sample_size14/14);
+var tvalue = AStudT(.05,no_clusters14-1);
+tot_sample_size14=((tvalue*tvalue) / (Za2*Za2)) * tot_sample_size14 ;
+form.no_clusters14.value = ''+Math.ceil(tot_sample_size14/14);
+form.tot_sample_size14.value = 14 * Math.ceil(tot_sample_size14/14);
+
+//15 observations per cluster ;
+var DEFF15 = 1 + (15 - 1) * ICCfinal;
+form.deff_15.value = DEFF15;
+tot_sample_size15 = (DEFF15*N_totpop*(proportion/100)*(1-(proportion/100)))/((((d_precision/100) * (d_precision/100))/(Za2 * Za2))*(N_totpop - 1) + ((proportion/100) * (1 - (proportion/100))));
+no_clusters15 = ''+Math.ceil(tot_sample_size15/15);
+var tvalue = AStudT(.05,no_clusters15-1);
+tot_sample_size15=((tvalue*tvalue) / (Za2*Za2)) * tot_sample_size15 ;
+form.no_clusters15.value = ''+Math.ceil(tot_sample_size15/15);
+form.tot_sample_size15.value = 15 * Math.ceil(tot_sample_size15/15);
+
+//16 observations per cluster ;
+var DEFF16 = 1 + (16 - 1) * ICCfinal;
+form.deff_16.value = DEFF16;
+tot_sample_size16 = (DEFF16*N_totpop*(proportion/100)*(1-(proportion/100)))/((((d_precision/100) * (d_precision/100))/(Za2 * Za2))*(N_totpop - 1) + ((proportion/100) * (1 - (proportion/100))));
+no_clusters16 = ''+Math.ceil(tot_sample_size16/16);
+var tvalue = AStudT(.05,no_clusters16-1);
+tot_sample_size16=((tvalue*tvalue) / (Za2*Za2)) * tot_sample_size16 ;
+form.no_clusters16.value = ''+Math.ceil(tot_sample_size16/16);
+form.tot_sample_size16.value = 16 * Math.ceil(tot_sample_size16/16);
+
+//17 observations per cluster ;
+var DEFF17 = 1 + (17 - 1) * ICCfinal;
+form.deff_17.value = DEFF17;
+tot_sample_size17 = (DEFF17*N_totpop*(proportion/100)*(1-(proportion/100)))/((((d_precision/100) * (d_precision/100))/(Za2 * Za2))*(N_totpop - 1) + ((proportion/100) * (1 - (proportion/100))));
+no_clusters17 = ''+Math.ceil(tot_sample_size17/17);
+var tvalue = AStudT(.05,no_clusters17-1);
+tot_sample_size17=((tvalue*tvalue) / (Za2*Za2)) * tot_sample_size17 ;
+form.no_clusters17.value = ''+Math.ceil(tot_sample_size17/17);
+form.tot_sample_size17.value = 17 * Math.ceil(tot_sample_size17/17);
+
+//18 observations per cluster ;
+var DEFF18 = 1 + (18 - 1) * ICCfinal;
+form.deff_18.value = DEFF18;
+tot_sample_size18 = (DEFF18*N_totpop*(proportion/100)*(1-(proportion/100)))/((((d_precision/100) * (d_precision/100))/(Za2 * Za2))*(N_totpop - 1) + ((proportion/100) * (1 - (proportion/100))));
+no_clusters18 = ''+Math.ceil(tot_sample_size18/18);
+var tvalue = AStudT(.05,no_clusters18-1);
+tot_sample_size18=((tvalue*tvalue) / (Za2*Za2)) * tot_sample_size18 ;
+form.no_clusters18.value = ''+Math.ceil(tot_sample_size18/18);
+form.tot_sample_size18.value = 18 * Math.ceil(tot_sample_size18/18);
+
+//19 observations per cluster ;
+var DEFF19 = 1 + (19 - 1) * ICCfinal;
+form.deff_19.value = DEFF19;
+tot_sample_size19 = (DEFF19*N_totpop*(proportion/100)*(1-(proportion/100)))/((((d_precision/100) * (d_precision/100))/(Za2 * Za2))*(N_totpop - 1) + ((proportion/100) * (1 - (proportion/100))));
+no_clusters19 = ''+Math.ceil(tot_sample_size19/19);
+var tvalue = AStudT(.05,no_clusters19-1);
+tot_sample_size19=((tvalue*tvalue) / (Za2*Za2)) * tot_sample_size19 ;
+form.no_clusters19.value = ''+Math.ceil(tot_sample_size19/19);
+form.tot_sample_size19.value = 19 * Math.ceil(tot_sample_size19/19);
+
+
+//20 observations per cluster ;
+var DEFF20 = 1 + (20 - 1) * ICCfinal;
+form.deff_20.value = DEFF20;
+tot_sample_size20 = (DEFF20*N_totpop*(proportion/100)*(1-(proportion/100)))/((((d_precision/100) * (d_precision/100))/(Za2 * Za2))*(N_totpop - 1) + ((proportion/100) * (1 - (proportion/100))));
+no_clusters20 = ''+Math.ceil(tot_sample_size20/20);
+var tvalue = AStudT(.05,no_clusters20-1);
+tot_sample_size20=((tvalue*tvalue) / (Za2*Za2)) * tot_sample_size20 ;
+form.no_clusters20.value = ''+Math.ceil(tot_sample_size20/20);
+form.tot_sample_size20.value = 20 * Math.ceil(tot_sample_size20/20);
+
+//22 observations per cluster ;
+var DEFF22 = 1 + (22 - 1) * ICCfinal;
+form.deff_22.value = DEFF22;
+tot_sample_size22 = (DEFF22*N_totpop*(proportion/100)*(1-(proportion/100)))/((((d_precision/100) * (d_precision/100))/(Za2 * Za2))*(N_totpop - 1) + ((proportion/100) * (1 - (proportion/100))));
+no_clusters22 = ''+Math.ceil(tot_sample_size22/22);
+var tvalue = AStudT(.05,no_clusters22-1);
+tot_sample_size22=((tvalue*tvalue) / (Za2*Za2)) * tot_sample_size22 ;
+form.no_clusters22.value = ''+Math.ceil(tot_sample_size22/22);
+form.tot_sample_size22.value = 22 * Math.ceil(tot_sample_size22/22);
+
+//25 observations per cluster ;
+var DEFF25 = 1 + (25 - 1) * ICCfinal;
+form.deff_25.value = DEFF25;
+tot_sample_size25 = (DEFF25*N_totpop*(proportion/100)*(1-(proportion/100)))/((((d_precision/100) * (d_precision/100))/(Za2 * Za2))*(N_totpop - 1) + ((proportion/100) * (1 - (proportion/100))));
+no_clusters25 = ''+Math.ceil(tot_sample_size25/25);
+var tvalue = AStudT(.05,no_clusters25-1);
+tot_sample_size25=((tvalue*tvalue) / (Za2*Za2)) * tot_sample_size25 ;
+form.no_clusters25.value = ''+Math.ceil(tot_sample_size25/25);
+form.tot_sample_size25.value = 25 * Math.ceil(tot_sample_size25/25);
+
+//30 observations per cluster ;
+var DEFF30 = 1 + (30 - 1) * ICCfinal;
+form.deff_30.value = DEFF30;
+tot_sample_size30 = (DEFF30*N_totpop*(proportion/100)*(1-(proportion/100)))/((((d_precision/100) * (d_precision/100))/(Za2 * Za2))*(N_totpop - 1) + ((proportion/100) * (1 - (proportion/100))));
+no_clusters30 = ''+Math.ceil(tot_sample_size30/30);
+var tvalue = AStudT(.05,no_clusters30-1);
+tot_sample_size30=((tvalue*tvalue) / (Za2*Za2)) * tot_sample_size30 ;
+form.no_clusters30.value = ''+Math.ceil(tot_sample_size30/30);
+form.tot_sample_size30.value = 30 * Math.ceil(tot_sample_size30/30);
+
+
+//35 observations per cluster ;
+var DEFF35 = 1 + (35 - 1) * ICCfinal;
+form.deff_35.value = DEFF35;
+tot_sample_size35 = (DEFF35*N_totpop*(proportion/100)*(1-(proportion/100)))/((((d_precision/100) * (d_precision/100))/(Za2 * Za2))*(N_totpop - 1) + ((proportion/100) * (1 - (proportion/100))));
+no_clusters35 = ''+Math.ceil(tot_sample_size35/35);
+var tvalue = AStudT(.05,no_clusters35-1);
+tot_sample_size35=((tvalue*tvalue) / (Za2*Za2)) * tot_sample_size35 ;
+form.no_clusters35.value = ''+Math.ceil(tot_sample_size35/35);
+form.tot_sample_size35.value = 35 * Math.ceil(tot_sample_size35/35);
+
+//40 observations per cluster ;
+var DEFF40 = 1 + (40 - 1) * ICCfinal;
+form.deff_40.value = DEFF40;
+tot_sample_size40 = (DEFF40*N_totpop*(proportion/100)*(1-(proportion/100)))/((((d_precision/100) * (d_precision/100))/(Za2 * Za2))*(N_totpop - 1) + ((proportion/100) * (1 - (proportion/100))));
+no_clusters40 = ''+Math.ceil(tot_sample_size40/40);
+var tvalue = AStudT(.05,no_clusters40-1);
+tot_sample_size40=((tvalue*tvalue) / (Za2*Za2)) * tot_sample_size40 ;
+form.no_clusters40.value = ''+Math.ceil(tot_sample_size40/40);
+form.tot_sample_size40.value = 40 * Math.ceil(tot_sample_size40/40);
+
+//45 observations per cluster ;
+var DEFF45 = 1 + (45 - 1) * ICCfinal;
+form.deff_45.value = DEFF45;
+tot_sample_size45 = (DEFF45*N_totpop*(proportion/100)*(1-(proportion/100)))/((((d_precision/100) * (d_precision/100))/(Za2 * Za2))*(N_totpop - 1) + ((proportion/100) * (1 - (proportion/100))));
+no_clusters45 = ''+Math.ceil(tot_sample_size45/45);
+var tvalue = AStudT(.05,no_clusters45-1);
+tot_sample_size45=((tvalue*tvalue) / (Za2*Za2)) * tot_sample_size45 ;
+form.no_clusters45.value = ''+Math.ceil(tot_sample_size45/45);
+form.tot_sample_size45.value = 45 * Math.ceil(tot_sample_size45/45);
+
+//50 observations per cluster ;
+var DEFF50 = 1 + (50 - 1) * ICCfinal;
+form.deff_50.value = DEFF50;
+tot_sample_size50 = (DEFF50*N_totpop*(proportion/100)*(1-(proportion/100)))/((((d_precision/100) * (d_precision/100))/(Za2 * Za2))*(N_totpop - 1) + ((proportion/100) * (1 - (proportion/100))));
+no_clusters50 = ''+Math.ceil(tot_sample_size50/50);
+var tvalue = AStudT(.05,no_clusters50-1);
+tot_sample_size50=((tvalue*tvalue) / (Za2*Za2)) * tot_sample_size50 ;
+form.no_clusters50.value = ''+Math.ceil(tot_sample_size50/50);
+form.tot_sample_size50.value = 50 * Math.ceil(tot_sample_size50/50);
+
+//55 observations per cluster ;
+var DEFF55 = 1 + (55 - 1) * ICCfinal;
+form.deff_55.value = DEFF55;
+tot_sample_size55 = (DEFF55*N_totpop*(proportion/100)*(1-(proportion/100)))/((((d_precision/100) * (d_precision/100))/(Za2 * Za2))*(N_totpop - 1) + ((proportion/100) * (1 - (proportion/100))));
+no_clusters55 = ''+Math.ceil(tot_sample_size55/55);
+var tvalue = AStudT(.05,no_clusters55-1);
+tot_sample_size55=((tvalue*tvalue) / (Za2*Za2)) * tot_sample_size55 ;
+form.no_clusters55.value = ''+Math.ceil(tot_sample_size55/55);
+form.tot_sample_size55.value = 55 * Math.ceil(tot_sample_size55/55);
+
+//60 observations per cluster ;
+var DEFF60 = 1 + (60 - 1) * ICCfinal;
+form.deff_60.value = DEFF60;
+tot_sample_size60 = (DEFF60*N_totpop*(proportion/100)*(1-(proportion/100)))/((((d_precision/100) * (d_precision/100))/(Za2 * Za2))*(N_totpop - 1) + ((proportion/100) * (1 - (proportion/100))));
+no_clusters60 = ''+Math.ceil(tot_sample_size60/60);
+var tvalue = AStudT(.05,no_clusters60-1);
+tot_sample_size60=((tvalue*tvalue) / (Za2*Za2)) * tot_sample_size60 ;
+form.no_clusters60.value = ''+Math.ceil(tot_sample_size60/60);
+form.tot_sample_size60.value = 60 * Math.ceil(tot_sample_size60/60);
+
+//65 observations per cluster ;
+var DEFF65 = 1 + (65 - 1) * ICCfinal;
+form.deff_65.value = DEFF65;
+tot_sample_size65 = (DEFF65*N_totpop*(proportion/100)*(1-(proportion/100)))/((((d_precision/100) * (d_precision/100))/(Za2 * Za2))*(N_totpop - 1) + ((proportion/100) * (1 - (proportion/100))));
+no_clusters65 = ''+Math.ceil(tot_sample_size65/65);
+var tvalue = AStudT(.05,no_clusters65-1);
+tot_sample_size65=((tvalue*tvalue) / (Za2*Za2)) * tot_sample_size65 ;
+form.no_clusters65.value = ''+Math.ceil(tot_sample_size65/65);
+form.tot_sample_size65.value = 65 * Math.ceil(tot_sample_size65/65);
+
+//70 observations per cluster ;
+var DEFF70 = 1 + (70 - 1) * ICCfinal;
+form.deff_70.value = DEFF70;
+tot_sample_size70 = (DEFF70*N_totpop*(proportion/100)*(1-(proportion/100)))/((((d_precision/100) * (d_precision/100))/(Za2 * Za2))*(N_totpop - 1) + ((proportion/100) * (1 - (proportion/100))));
+no_clusters70 = ''+Math.ceil(tot_sample_size70/70);
+var tvalue = AStudT(.05,no_clusters70-1);
+tot_sample_size70=((tvalue*tvalue) / (Za2*Za2)) * tot_sample_size70 ;
+form.no_clusters70.value = ''+Math.ceil(tot_sample_size70/70);
+form.tot_sample_size70.value = 70 * Math.ceil(tot_sample_size70/70);
+
+//75 observations per cluster ;
+var DEFF75 = 1 + (75 - 1) * ICCfinal;
+form.deff_75.value = DEFF75;
+tot_sample_size75 = (DEFF75*N_totpop*(proportion/100)*(1-(proportion/100)))/((((d_precision/100) * (d_precision/100))/(Za2 * Za2))*(N_totpop - 1) + ((proportion/100) * (1 - (proportion/100))));
+no_clusters75 = ''+Math.ceil(tot_sample_size75/75);
+var tvalue = AStudT(.05,no_clusters75-1);
+tot_sample_size75=((tvalue*tvalue) / (Za2*Za2)) * tot_sample_size75 ;
+form.no_clusters75.value = ''+Math.ceil(tot_sample_size75/75);
+form.tot_sample_size75.value = 75 * Math.ceil(tot_sample_size75/75);
+
+//100 observations per cluster ;
+var DEFF100 = 1 + (100 - 1) * ICCfinal;
+form.deff_100.value = DEFF100;
+tot_sample_size100 = (DEFF100*N_totpop*(proportion/100)*(1-(proportion/100)))/((((d_precision/100) * (d_precision/100))/(Za2 * Za2))*(N_totpop - 1) + ((proportion/100) * (1 - (proportion/100))));
+no_clusters100 = ''+Math.ceil(tot_sample_size100/100);
+var tvalue = AStudT(.05,no_clusters100-1);
+tot_sample_size100=((tvalue*tvalue) / (Za2*Za2)) * tot_sample_size100 ;
+form.no_clusters100.value = ''+Math.ceil(tot_sample_size100/100);
+form.tot_sample_size100.value = 100 * Math.ceil(tot_sample_size100/100);
+
+//150 observations per cluster ;
+var DEFF150 = 1 + (150 - 1) * ICCfinal;
+form.deff_150.value = DEFF150;
+tot_sample_size150 = (DEFF150*N_totpop*(proportion/100)*(1-(proportion/100)))/((((d_precision/100) * (d_precision/100))/(Za2 * Za2))*(N_totpop - 1) + ((proportion/100) * (1 - (proportion/100))));
+no_clusters150 = ''+Math.ceil(tot_sample_size150/150);
+var tvalue = AStudT(.05,no_clusters150-1);
+tot_sample_size150=((tvalue*tvalue) / (Za2*Za2)) * tot_sample_size150 ;
+form.no_clusters150.value = ''+Math.ceil(tot_sample_size150/150);
+form.tot_sample_size150.value = 150 * Math.ceil(tot_sample_size150/150);
+
+//200 observations per cluster ;
+var DEFF200 = 1 + (200 - 1) * ICCfinal;
+form.deff_200.value = DEFF200;
+tot_sample_size200 = (DEFF200*N_totpop*(proportion/100)*(1-(proportion/100)))/((((d_precision/100) * (d_precision/100))/(Za2 * Za2))*(N_totpop - 1) + ((proportion/100) * (1 - (proportion/100))));
+no_clusters200 = ''+Math.ceil(tot_sample_size200/200);
+var tvalue = AStudT(.05,no_clusters200-1);
+tot_sample_size200=((tvalue*tvalue) / (Za2*Za2)) * tot_sample_size200 ;
+form.no_clusters200.value = ''+Math.ceil(tot_sample_size200/200);
+form.tot_sample_size200.value = 200 * Math.ceil(tot_sample_size200/200);
+
+//250 observations per cluster ;
+var DEFF250 = 1 + (250 - 1) * ICCfinal;
+form.deff_250.value = DEFF250;
+tot_sample_size250 = (DEFF250*N_totpop*(proportion/100)*(1-(proportion/100)))/((((d_precision/100) * (d_precision/100))/(Za2 * Za2))*(N_totpop - 1) + ((proportion/100) * (1 - (proportion/100))));
+no_clusters250 = ''+Math.ceil(tot_sample_size250/250);
+var tvalue = AStudT(.05,no_clusters250-1);
+tot_sample_size250=((tvalue*tvalue) / (Za2*Za2)) * tot_sample_size250 ;
+form.no_clusters250.value = ''+Math.ceil(tot_sample_size250/250);
+form.tot_sample_size250.value = 250 * Math.ceil(tot_sample_size250/250);
+
+//300 observations per cluster ;
+var DEFF300 = 1 + (300 - 1) * ICCfinal;
+form.deff_300.value = DEFF300;
+tot_sample_size300 = (DEFF300*N_totpop*(proportion/100)*(1-(proportion/100)))/((((d_precision/100) * (d_precision/100))/(Za2 * Za2))*(N_totpop - 1) + ((proportion/100) * (1 - (proportion/100))));
+no_clusters300 = ''+Math.ceil(tot_sample_size300/300);
+var tvalue = AStudT(.05,no_clusters300-1);
+tot_sample_size300=((tvalue*tvalue) / (Za2*Za2)) * tot_sample_size300 ;
+form.no_clusters300.value = ''+Math.ceil(tot_sample_size300/300);
+form.tot_sample_size300.value = 300 * Math.ceil(tot_sample_size300/300);
+
+//350 observations per cluster ;
+var DEFF350 = 1 + (350 - 1) * ICCfinal;
+form.deff_350.value = DEFF350;
+tot_sample_size350 = (DEFF350*N_totpop*(proportion/100)*(1-(proportion/100)))/((((d_precision/100) * (d_precision/100))/(Za2 * Za2))*(N_totpop - 1) + ((proportion/100) * (1 - (proportion/100))));
+no_clusters350 = ''+Math.ceil(tot_sample_size350/350);
+var tvalue = AStudT(.05,no_clusters350-1);
+tot_sample_size350=((tvalue*tvalue) / (Za2*Za2)) * tot_sample_size350 ;
+form.no_clusters350.value = ''+Math.ceil(tot_sample_size350/350);
+form.tot_sample_size350.value = 350 * Math.ceil(tot_sample_size350/350);
+
+//400 observations per cluster ;
+var DEFF400 = 1 + (400 - 1) * ICCfinal;
+form.deff_400.value = DEFF400;
+tot_sample_size400 = (DEFF400*N_totpop*(proportion/100)*(1-(proportion/100)))/((((d_precision/100) * (d_precision/100))/(Za2 * Za2))*(N_totpop - 1) + ((proportion/100) * (1 - (proportion/100))));
+no_clusters400 = ''+Math.ceil(tot_sample_size400/400);
+var tvalue = AStudT(.05,no_clusters400-1);
+tot_sample_size400=((tvalue*tvalue) / (Za2*Za2)) * tot_sample_size400 ;
+form.no_clusters400.value = ''+Math.ceil(tot_sample_size400/400);
+form.tot_sample_size400.value = 400 * Math.ceil(tot_sample_size400/400);
+
+//450 observations per cluster ;
+var DEFF450 = 1 + (450 - 1) * ICCfinal;
+form.deff_450.value = DEFF450;
+tot_sample_size450 = (DEFF450*N_totpop*(proportion/100)*(1-(proportion/100)))/((((d_precision/100) * (d_precision/100))/(Za2 * Za2))*(N_totpop - 1) + ((proportion/100) * (1 - (proportion/100))));
+no_clusters450 = ''+Math.ceil(tot_sample_size450/450);
+var tvalue = AStudT(.05,no_clusters450-1);
+tot_sample_size450=((tvalue*tvalue) / (Za2*Za2)) * tot_sample_size450 ;
+form.no_clusters450.value = ''+Math.ceil(tot_sample_size450/450);
+form.tot_sample_size450.value = 450 * Math.ceil(tot_sample_size450/450);
+
+//500 observations per cluster ;
+var DEFF500 = 1 + (500 - 1) * ICCfinal;
+form.deff_500.value = DEFF500;
+tot_sample_size500 = (DEFF500*N_totpop*(proportion/100)*(1-(proportion/100)))/((((d_precision/100) * (d_precision/100))/(Za2 * Za2))*(N_totpop - 1) + ((proportion/100) * (1 - (proportion/100))));
+no_clusters500 = ''+Math.ceil(tot_sample_size500/500);
+var tvalue = AStudT(.05,no_clusters500-1);
+tot_sample_size500=((tvalue*tvalue) / (Za2*Za2)) * tot_sample_size500 ;
+form.no_clusters500.value = ''+Math.ceil(tot_sample_size500/500);
+form.tot_sample_size500.value = 500 * Math.ceil(tot_sample_size500/500);
+
+
+
+}
+
+// t function;
+    function StudT(t,n) {
+    t=Math.abs(t); var w=t/Math.sqrt(n); var th=Math.atan(w)
+    if(n==1) { return 1-th/PiD2 }
+    var sth=Math.sin(th); var cth=Math.cos(th)
+    if((n%2)==1)
+        { return 1-(th+sth*cth*StatCom(cth*cth,2,n-3,-1))/PiD2 }
+        else
+        { return 1-sth*StatCom(cth*cth,1,n-3,-1) }
+    }
+
+
+    function AStudT(p,n) { var v=0.5; var dv=0.5; var t=0
+    while(dv>1e-6) { t=1/v-1; dv=dv/2; if(StudT(t,n)>p) { v=v-dv } else { v=v+dv } }
+    return t
+    }
+
+    function StatCom(q,i,j,b) {
+    var zz=1; var z=zz; var k=i; while(k<=j) { zz=zz*q*k/(k-b); z=z+zz; k=k+2 }
+    return z
+    }
+
+
+       
+
+<!-- done hiding from old browsers -->
+</SCRIPT>
+
+<META content="Microsoft FrontPage 6.0" name=GENERATOR>
+<link rel="File-List" href="samplesize%20icc%20deff2_files/filelist.xml">
+<!--[if !mso]>
+<style>
+v\:*         { behavior: url(#default#VML) }
+o\:*         { behavior: url(#default#VML) }
+.shape       { behavior: url(#default#VML) }
+</style>
+<![endif]--><!--[if gte mso 9]>
+<xml><o:shapedefaults v:ext="edit" spidmax="1027"/>
+</xml><![endif]-->
+</HEAD>
+<BODY bgColor=#C0C0C0>
+<H2><CENTER>Sample Size Calculations for a Proportion for Cluster Surveys<p>
+<font size="4">Allows input of the ICC <b><i>or</i></b> the DEFF and average number of 
+observations per cluster</font></p>
+</CENTER></H2>
+<p align="center" style="margin-top: 0; margin-bottom: 0">Version 7.02.27</p>
+<FORM>
+<p align="left" style="margin-top: 0; margin-bottom: 0">&nbsp;</p>
+<CENTER>
+<TABLE border=1 width="824">
+  <TBODY>
+  <tr>
+    <TD width="327">
+      <p align="right"><b>Target population size:</b>&nbsp;&nbsp;
+    </TD>
+    <TD width="91" align="center">
+    <!--webbot bot="Validation" s-data-type="Number" s-number-separators="x." b-value-required="TRUE" i-minimum-length="1" i-maximum-length="8" s-validation-constraint="Greater than or equal to" s-validation-value="1" s-validation-constraint="Less than or equal to" s-validation-value="100000000" --><INPUT onfocus=N_totpop.select() size=8 value=1000000 name=N_totpop tabindex="1" maxlength="8"></TD>
+    <TD width="389">&nbsp;</TD>
+    </tr>
+  <TR>
+    <TD width="327">
+      <p align="right"><b>Estimated percentage in the target population with the 
+      event of interest:</b></TD>
+    <TD width="91" align="center">
+    <!--webbot bot="Validation" s-data-type="Number" s-number-separators=",." --><INPUT onfocus=proportion.select() size=3 value=50 name=proportion tabindex="2"> %</TD>
+    <TD width="389">
+      <DIV align=left>&nbsp;</DIV></TD>
+  </TR>
+  <tr>
+    <TD width="327">
+      <DIV align=right><b>Confidence interval width:</b> </DIV>
+      <DIV align=right>&quot;<i>I'd like the sample percentage to be within </i></DIV></TD>
+    <TD width="91" align="center">
+    <i> <u>+</u> </i>
+    <!--webbot bot="Validation" s-data-type="Number" s-number-separators=",." --><INPUT onfocus=d_precision.select() size=2 value=5 name=d_precision tabindex="3"> %</TD>
+    <TD width="389">
+      <DIV align=left><i>of the target</i></DIV>
+      <DIV align=left><i>population value</i>.&quot;</DIV></TD>
+  </tr>
+  <TR>
+    <TD width="327">
+      <DIV align=right><b>Confidence coefficient: </b> </DIV>
+      <DIV align=right>&quot;<i>I want to be</i></DIV></TD>
+    <TD width="91" align="center">
+    <!--webbot bot="Validation" s-data-type="Number" s-number-separators=",." --><INPUT onfocus=cl.select() size=3 value=95 name=cl tabindex="4"> %</TD>
+    <TD width="389">
+      <DIV align=left><i>confident that the confidence interval around the sample 
+        percentage captures the target population value</i>.&quot;</DIV></TD>
+  </TR>
+  </CENTER>
+  <TR>
+    <TD width="807" colspan="3">
+      <p align="center"><i><font color="#0000FF"><b>Please provide information 
+      on either the ICC <u>or</u> the DEFF and average number of observations 
+      per cluster</b></font></i></TD>
+  </TR>
+  <tr>
+    <TD width="327">
+      <p align="right"><b>ICC</b></TD>
+    <TD width="91" align="center">
+    <!--webbot bot="Validation" s-data-type="Number" s-number-separators=",." --><INPUT onfocus=ICC.select() size=4 value=" 0" name=ICC tabindex="5"></TD>
+    <TD width="389">&nbsp;if unknown, leave a 0</TD>
+    </tr>
+  <TR>
+    <TD width="327">
+      <p align="right"><b>Estimated Design effect (<i>DEFF</i>):</b></p>
+    </TD>
+<CENTER>
+    <TD width="91" align="center">
+    <!--webbot bot="Validation" s-data-type="Number" s-number-separators=",." --><INPUT onfocus=deff.select() size=4 value=" 0" name=deff tabindex="6"></TD>
+    <TD width="389"><b>and Average Number of Observations per Cluster </b>
+    <!--webbot bot="Validation" s-data-type="Number" s-number-separators=",." --><INPUT onfocus=avgpercluster.select() size=4 value="30" name=avgpercluster tabindex="7"></TD>
+    </TR>
+  </CENTER>
+  <TR>
+<CENTER>
+    </TR>
+  </TBODY></TABLE>
+<P><INPUT onclick=Calc(this.form) type=button value=Compute> 
+<P style="margin-top: 0; margin-bottom: 0">
+<TABLE border=1 width="755">
+  <TBODY>
+  <TR vAlign=bottom>
+    <TD width="195" align="right">
+      <DIV align=right><b>&nbsp;ICC=</b></DIV></TD>
+    <TD width="152" align="center">
+    <b>
+    <INPUT onfocus=N_totpop.focus() size=8 name=ICCfinal></b></TD>
+    <TD width="142" align="center">
+    <p align="right"><b>DEFF=</b></TD>
+    <TD width="148" align="center">
+    <INPUT onfocus=N_totpop.focus() size=8 name=DEFFfinal></TD>
+    <TD width="500" align="center">
+    <p align="left">&nbsp;with an average of <b><font size="4">30</font></b> 
+	observations per cluster</TD>
+  </TR>
+  </TBODY></TABLE></CENTER>
+
+<div align="center">
+  <center>
+  <table border="1" cellpadding="0" cellspacing="0" style="border-collapse: collapse" bordercolor="#111111" height="268" width="441">
+    <tr>
+      <td height="14" align="center" width="119" style="padding: 1" bordercolor="#FFFFFF">
+      <p align="center"><b>Avg. no. of observations per cluster</b></td>
+      <td height="14" align="center" width="122" style="padding: 1" bordercolor="#FFFFFF"><b>Number of Clusters</b></td>
+      <td height="14" align="center" width="118" style="padding: 1" bordercolor="#FFFFFF"><b>Total sample size</b></td>
+      <td height="14" align="center" width="77" style="padding: 1" bordercolor="#FFFFFF"><b>DEFF</b></td>
+    </tr>
+    <tr>
+      <td height="19" align="center" width="119" style="padding: 1" bordercolor="#FFFFFF">10</td>
+      <td height="19" align="center" width="122" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=no_clusters10></td>
+      <td height="19" align="center" width="118" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=tot_sample_size10></td>
+      <td height="19" align="center" width="77" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 name=deff_10 value="0"></td>
+    </tr>
+    <tr>
+      <td height="19" align="center" width="119" style="padding: 1" bordercolor="#FFFFFF">11</td>
+      <td height="19" align="center" width="122" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=no_clusters11></td>
+      <td height="19" align="center" width="118" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=tot_sample_size11></td>
+      <td height="19" align="center" width="77" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 name=deff_11 value="0"></td>
+    </tr>
+    <tr>
+      <td height="19" align="center" width="119" style="padding: 1" bordercolor="#FFFFFF">12</td>
+      <td height="19" align="center" width="122" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=no_clusters12></td>
+      <td height="19" align="center" width="118" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=tot_sample_size12></td>
+      <td height="19" align="center" width="77" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 name=deff_12 value="0"></td>
+    </tr>
+    <tr>
+      <td height="19" align="center" width="119" style="padding: 1" bordercolor="#FFFFFF">13</td>
+      <td height="19" align="center" width="122" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=no_clusters13></td>
+      <td height="19" align="center" width="118" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=tot_sample_size13></td>
+      <td height="19" align="center" width="77" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 name=deff_13 value="0"></td>
+    </tr>
+    <tr>
+      <td height="19" align="center" width="119" style="padding: 1" bordercolor="#FFFFFF">14</td>
+      <td height="19" align="center" width="122" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=no_clusters14></td>
+      <td height="19" align="center" width="118" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=tot_sample_size14></td>
+      <td height="19" align="center" width="77" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 name=deff_14 value="0"></td>
+    </tr>
+    <tr>
+      <td height="19" align="center" width="119" style="padding: 1" bordercolor="#FFFFFF">15</td>
+      <td height="19" align="center" width="122" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=no_clusters15></td>
+      <td height="19" align="center" width="118" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=tot_sample_size15></td>
+      <td height="19" align="center" width="77" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=deff_15></td>
+    </tr>
+    <tr>
+      <td height="19" align="center" width="119" style="padding: 1" bordercolor="#FFFFFF">16</td>
+      <td height="19" align="center" width="122" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=no_clusters16></td>
+      <td height="19" align="center" width="118" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=tot_sample_size16></td>
+      <td height="19" align="center" width="77" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=deff_16></td>
+    </tr>
+    <tr>
+      <td height="19" align="center" width="119" style="padding: 1" bordercolor="#FFFFFF">17</td>
+      <td height="19" align="center" width="122" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=no_clusters17></td>
+      <td height="19" align="center" width="118" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=tot_sample_size17></td>
+      <td height="19" align="center" width="77" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=deff_17></td>
+    </tr>
+    <tr>
+      <td height="19" align="center" width="119" style="padding: 1" bordercolor="#FFFFFF">18</td>
+      <td height="19" align="center" width="122" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=no_clusters18></td>
+      <td height="19" align="center" width="118" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=tot_sample_size18></td>
+      <td height="19" align="center" width="77" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=deff_18></td>
+    </tr>
+    <tr>
+      <td height="19" align="center" width="119" style="padding: 1" bordercolor="#FFFFFF">19</td>
+      <td height="19" align="center" width="122" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=no_clusters19></td>
+      <td height="19" align="center" width="118" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=tot_sample_size19></td>
+      <td height="19" align="center" width="77" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=deff_19></td>
+    </tr>
+    <tr>
+      <td height="19" align="center" width="119" style="padding: 1" bordercolor="#FFFFFF">20</td>
+      <td height="19" align="center" width="122" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=no_clusters20></td>
+      <td height="19" align="center" width="118" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=tot_sample_size20></td>
+      <td height="19" align="center" width="77" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=deff_20></td>
+    </tr>
+    <tr>
+      <td height="16" align="center" width="119" style="padding: 1" bordercolor="#FFFFFF">22</td>
+      <td height="16" align="center" width="122" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=no_clusters22></td>
+      <td height="16" align="center" width="118" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=tot_sample_size22></td>
+      <td height="16" align="center" width="77" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=deff_22></td>
+    </tr>
+    <tr>
+      <td height="19" align="center" width="119" style="padding: 1" bordercolor="#FFFFFF">25</td>
+      <td height="19" align="center" width="122" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=no_clusters25></td>
+      <td height="19" align="center" width="118" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=tot_sample_size25></td>
+      <td height="19" align="center" width="77" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=dN_totpop.focus() size=8 value=0 name=deff_25></td>
+    </tr>
+    <tr>
+      <td height="19" align="center" width="119" style="padding: 1" bordercolor="#FFFFFF">30</td>
+      <td height="19" align="center" width="122" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=no_clusters30></td>
+      <td height="19" align="center" width="118" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=tot_sample_size30></td>
+      <td height="19" align="center" width="77" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=deff_30></td>
+    </tr>
+    <tr>
+      <td height="19" align="center" width="119" style="padding: 1" bordercolor="#FFFFFF">35</td>
+      <td height="19" align="center" width="122" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=no_clusters35></td>
+      <td height="19" align="center" width="118" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=tot_sample_size35></td>
+      <td height="19" align="center" width="77" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=deff_35></td>
+    </tr>
+    <tr>
+      <td height="19" align="center" width="119" style="padding: 1" bordercolor="#FFFFFF">40</td>
+      <td height="19" align="center" width="122" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=no_clusters40></td>
+      <td height="19" align="center" width="118" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=tot_sample_size40></td>
+      <td height="19" align="center" width="77" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=deff_40></td>
+    </tr>
+    <tr>
+      <td height="19" align="center" width="119" style="padding: 1" bordercolor="#FFFFFF">45</td>
+      <td height="19" align="center" width="122" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=no_clusters45></td>
+      <td height="19" align="center" width="118" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=tot_sample_size45></td>
+      <td height="19" align="center" width="77" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=deff_45></td>
+    </tr>
+    <tr>
+      <td height="19" align="center" width="119" style="padding: 1" bordercolor="#FFFFFF">50</td>
+      <td height="19" align="center" width="122" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=no_clusters50></td>
+      <td height="19" align="center" width="118" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=tot_sample_size50></td>
+      <td height="19" align="center" width="77" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=deff_50></td>
+    </tr>
+    <tr>
+      <td height="19" align="center" width="119" style="padding: 1" bordercolor="#FFFFFF">55</td>
+      <td height="19" align="center" width="122" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=no_clusters55></td>
+      <td height="19" align="center" width="118" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=tot_sample_size55></td>
+      <td height="19" align="center" width="77" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=deff_55></td>
+    </tr>
+    <tr>
+      <td height="19" align="center" width="119" style="padding: 1" bordercolor="#FFFFFF">60</td>
+      <td height="19" align="center" width="122" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=no_clusters60></td>
+      <td height="19" align="center" width="118" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=tot_sample_size60></td>
+      <td height="19" align="center" width="77" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=deff_60></td>
+    </tr>
+    <tr>
+      <td height="19" align="center" width="119" style="padding: 1" bordercolor="#FFFFFF">65</td>
+      <td height="19" align="center" width="122" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=no_clusters65></td>
+      <td height="19" align="center" width="118" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=tot_sample_size65></td>
+      <td height="19" align="center" width="77" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=deff_65></td>
+    </tr>
+    <tr>
+      <td height="19" align="center" width="119" style="padding: 1" bordercolor="#FFFFFF">70</td>
+      <td height="19" align="center" width="122" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=no_clusters70></td>
+      <td height="19" align="center" width="118" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=tot_sample_size70></td>
+      <td height="19" align="center" width="77" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=deff_70></td>
+    </tr>
+    <tr>
+      <td height="19" align="center" width="119" style="padding: 1" bordercolor="#FFFFFF">75</td>
+      <td height="19" align="center" width="122" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=no_clusters75></td>
+      <td height="19" align="center" width="118" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=tot_sample_size75></td>
+      <td height="19" align="center" width="77" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=deff_75></td>
+    </tr>
+    <tr>
+      <td height="19" align="center" width="119" style="padding: 1" bordercolor="#FFFFFF">100</td>
+      <td height="19" align="center" width="122" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=no_clusters100></td>
+      <td height="19" align="center" width="118" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=tot_sample_size100></td>
+      <td height="19" align="center" width="77" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=deff_100></td>
+    </tr>
+    <tr>
+      <td height="19" align="center" width="119" style="padding: 1" bordercolor="#FFFFFF">150</td>
+      <td height="19" align="center" width="122" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=no_clusters150></td>
+      <td height="19" align="center" width="118" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=tot_sample_size150></td>
+      <td height="19" align="center" width="77" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=deff_150></td>
+    </tr>
+    <tr>
+      <td height="16" align="center" width="119" style="padding: 1" bordercolor="#FFFFFF">200</td>
+      <td height="16" align="center" width="122" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=no_clusters200></td>
+      <td height="16" align="center" width="118" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=tot_sample_size200></td>
+      <td height="16" align="center" width="77" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=deff_200></td>
+    </tr>
+    <tr>
+      <td height="19" align="center" width="119" style="padding: 1" bordercolor="#FFFFFF">250</td>
+      <td height="19" align="center" width="122" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=no_clusters250></td>
+      <td height="19" align="center" width="118" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=tot_sample_size250></td>
+      <td height="19" align="center" width="77" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=deff_250></td>
+    </tr>
+    <tr>
+      <td height="19" align="center" width="119" style="padding: 1" bordercolor="#FFFFFF">300</td>
+      <td height="19" align="center" width="122" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=no_clusters300></td>
+      <td height="19" align="center" width="118" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=tot_sample_size300></td>
+      <td height="19" align="center" width="77" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=deff_300></td>
+    </tr>
+    <tr>
+      <td height="19" align="center" width="119" style="padding: 1" bordercolor="#FFFFFF">350</td>
+      <td height="19" align="center" width="122" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=no_clusters350></td>
+      <td height="19" align="center" width="118" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=tot_sample_size350></td>
+      <td height="19" align="center" width="77" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=deff_350></td>
+    </tr>
+    <tr>
+      <td height="19" align="center" width="119" style="padding: 1" bordercolor="#FFFFFF">400</td>
+      <td height="19" align="center" width="122" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=no_clusters400></td>
+      <td height="19" align="center" width="118" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=tot_sample_size400></td>
+      <td height="19" align="center" width="77" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=deff_400></td>
+    </tr>
+    <tr>
+      <td height="19" align="center" width="119" style="padding: 1" bordercolor="#FFFFFF">450</td>
+      <td height="19" align="center" width="122" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=no_clusters450></td>
+      <td height="19" align="center" width="118" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=tot_sample_size450></td>
+      <td height="19" align="center" width="77" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=deff_450></td>
+    </tr>
+    <tr>
+      <td height="19" align="center" width="119" style="padding: 1" bordercolor="#FFFFFF">500</td>
+      <td height="19" align="center" width="122" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=no_clusters500></td>
+      <td height="19" align="center" width="118" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=tot_sample_size500></td>
+      <td height="19" align="center" width="77" style="padding: 1" bordercolor="#FFFFFF">
+    <INPUT onfocus=N_totpop.focus() size=8 value=0 name=deff_500></td>
+    </tr>
+  </table>
+  </center>
+</div>
+<HR>
+
+<P>
+<HR>
+
+&nbsp;</form>
+<p>Notes:ICC = intraclass correlation coefficient, DEFF = design effect</p>
+<p>The DEFF is calculated from surveys as:&nbsp; variance accounting for the 
+complex sample design / variance assuming simple random sampling</p>
+<p>A DEFF = 1 means the variance accounting for the complex sample design was 
+exactly the same as assuming simple random sample.&nbsp; Usually the DEFF is &gt;1 
+because of the cluster design and is influenced by: 1) variability between 
+clusters in the outcome being assessed; 2) the average number of observations 
+per cluster; and 3) to a lesser extent, with proportions, the proportion of 
+individuals or households with the characteristic.</p>
+<p>The ICC, sometimes also called <font face="Times New Roman"><i>&#961;</i> (rho), 
+is another measure of the relatedness of cluster data.&nbsp; For a given DEFF 
+and average number of individuals sampled per cluster (<i>k</i>), the ICC can be 
+calculated as:</font></p>
+<p><font face="Times New Roman">&nbsp;&nbsp;&nbsp; ICC=(DEFF-1)/(<i>k</i>-1)</font></p>
+<p><font face="Times New Roman">An important feature of the ICC is that it is 
+not affected by the number of observations per cluster, whereas the DEFF is 
+strongly affected.</font></p>
+<p>In planning a survey, sample size calculations are performed to estimate the 
+number of individuals or households to assess.&nbsp; Sample size calculations 
+require a number of educated guesses, including an estimate of the DEFF or ICC.&nbsp; 
+Generally these estimates come from a previous survey or from other surveys.&nbsp; 
+Note that the DEFF and ICC can differ between indicators, such as the prevalence 
+of anemia, the proportion of households with piped water, etc.</p>
+<p><font face="Times New Roman">The goal of this program to provide 
+investigators various options on the number of observations per cluster and the 
+number of clusters.&nbsp; The decision as to which number of observations and 
+number of clusters are optimum for a given situation will depend upon the costs 
+of sending survey teams to a cluster and the cost to assess a cluster.&nbsp; If 
+a geographic area is large, the population dispersed, and the costs high to get 
+teams to a cluster, then the motivation may be to select a design that has fewer 
+clusters.&nbsp; On the other hand, if the geographic area is small and the 
+clusters are easy to get to, there may be a motivation to select a design with 
+relatively more clusters.</font></p>
+<p><font face="Times New Roman">To use this program, you must provide an 
+estimate of:</font></p>
+<ol>
+	<li><font face="Times New Roman">The target size population - this allows 
+	for the finite population correction which, when the target population is 
+	small, results in a smaller sample size.&nbsp; Usually this is from census 
+	data.</font></li>
+	<li><font face="Times New Roman">An estimate of the percent of the 
+	observations with the characteristic.&nbsp; This is usually based on 
+	previous experience.&nbsp; If the percent is unknown, using 50% will provide 
+	the largest sample size.&nbsp; For example, if a survey on immunization 
+	levels in two-year-old children is to be performed, usually previous surveys 
+	would be used as an estimate in the sample size.</font></li>
+	<li><font face="Times New Roman">The confidence interval width - how wide do 
+	you want the confidence interval around the point estimate in percent?&nbsp; Is <u>+</u>5% 
+	acceptable?&nbsp; smaller? larger?&nbsp; This is usually affected by the 
+	previous question, the percent of the observations with the characteristic.&nbsp; 
+	For example, if it is thought that the prevalence of vitamin A deficiency is 
+	50%, then a confidence interval width of +5% might be acceptable (i.e., a 
+	confidence interval of 45%, 55%).&nbsp; If the event is uncommon or very 
+	common, say 3%, then probably a narrower confidence interval width might be 
+	desirable, say <u>+</u>2%.&nbsp; The narrower the confidence interval width, 
+	the bigger the sample size.</font></li>
+	<li><font face="Times New Roman">The confidence coefficient - most 
+	investigators want a 95% confidence interval, but others, such as 90% or 
+	99%, could be used.</font></li>
+	<li>
+	<p style="margin-top: 0; margin-bottom: 0"><font face="Times New Roman">
+	Next, one of the two following must be provided:</font></li>
+</ol>
+<ul>
+	<li>
+	<p style="margin-top: 0; margin-bottom: 0"><font face="Times New Roman">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+	An estimate of the ICC - usually from previous studies</font></li>
+	<li>
+	<p style="margin-top: 0; margin-bottom: 0"><font face="Times New Roman">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+	An estimated of the DEFF with the average number of observations per cluster 
+	- again, usually from previous studies</font></li>
+</ul>
+<p style="margin-top: 0; margin-bottom: 0"><font face="Times New Roman">If the 
+ICC is provided, the DEFF at an arbitrary average of 30 observations per cluster 
+is calculated as:&nbsp; DEFF=1+(<i>k</i>-1)*ICC where <i>k</i> = 30.</font></p>
+<p style="margin-top: 0; margin-bottom: 0">&nbsp;</p>
+<p style="margin-top: 0; margin-bottom: 0"><font face="Times New Roman">If the 
+DEFF and average number per cluster are provided, the ICC is calculated using 
+the formula ICC=(DEFF-1)/(<i>k</i>-1).</font></p>
+<p style="margin-top: 0; margin-bottom: 0">&nbsp;</p>
+<p style="margin-top: 0; margin-bottom: 0"><font face="Times New Roman">The 
+sample size formula is</font></p>
+<p style="margin-top: 0; margin-bottom: 0">
+<span style="font-size: 11.0pt; font-family: Times New Roman">
+<span style="position: relative; top: 60.0pt"><!--[if gte vml 1]><v:shapetype id="_x0000_t75"
+ coordsize="21600,21600" o:spt="75" o:preferrelative="t" path="m@4@5l@4@11@9@11@9@5xe"
+ filled="f" stroked="f">
+ <v:stroke joinstyle="miter"/>
+ <v:formulas>
+  <v:f eqn="if lineDrawn pixelLineWidth 0"/>
+  <v:f eqn="sum @0 1 0"/>
+  <v:f eqn="sum 0 0 @1"/>
+  <v:f eqn="prod @2 1 2"/>
+  <v:f eqn="prod @3 21600 pixelWidth"/>
+  <v:f eqn="prod @3 21600 pixelHeight"/>
+  <v:f eqn="sum @0 0 1"/>
+  <v:f eqn="prod @6 1 2"/>
+  <v:f eqn="prod @7 21600 pixelWidth"/>
+  <v:f eqn="sum @8 21600 0"/>
+  <v:f eqn="prod @7 21600 pixelHeight"/>
+  <v:f eqn="sum @10 21600 0"/>
+ </v:formulas>
+ <v:path o:extrusionok="f" gradientshapeok="t" o:connecttype="rect"/>
+ <o:lock v:ext="edit" aspectratio="t"/>
+</v:shapetype><v:shape id="_x0000_s1025" type="#_x0000_t75" style='width:234.75pt;
+ height:158.25pt' fillcolor="window">
+ <v:imagedata src="samplesize%20icc%20deff2_files/image001.wmz" o:title=""/>
+</v:shape><![endif]--><![if !vml]><img border=0 width=313 height=211
+src="samplesize%20icc%20deff2_files/image002.gif" v:shapes="_x0000_s1025"><![endif]></span></span></p>&nbsp;&nbsp;&nbsp;
+<!--[if gte mso 9]><![endif]-->
+<p>
+&nbsp;</p>
+<p>
+&nbsp;</p>
+<p>
+One problem with the above formula is the use of 1.96 which assumes a large 
+number of clusters are going to be sampled.&nbsp; The <i>t</i>-distribution 
+should be used with <i>m</i>-1 degrees of freedom where <i>m</i> is the number 
+of clusters.&nbsp; However, the first calculation, such as dividing the sample 
+size based on the above formula by the average number of observations by 
+cluster, say 10, the number of clusters is not yet known.&nbsp; </p>
+<p>Therefore, this program performs the above calculation, looks at the number 
+of clusters, re-estimates the total sample size as:</p>
+<p>&nbsp;&nbsp;&nbsp; t-value<sup>2</sup>/1.96<sup>2</sup> times the original sample size</p>
+<p>and then recalculates the total sample size and number of clusters.&nbsp; 
+This is an approximation and should be close to the true sample size.</p>
+<p>&nbsp;</p>
+<p style="margin-top: 0; margin-bottom: 0"><font face="Times New Roman">Kevin M. 
+Sullivan, PhD, MPH, MHA (<a href="mailto:cdckms@sph.emory.edu">cdckms@sph.emory.edu</a>)</font></p>
+<p style="margin-top: 0; margin-bottom: 0"><font face="Times New Roman">
+Department of Epidemiology</font></p>
+<p style="margin-top: 0; margin-bottom: 0"><font face="Times New Roman">Emory 
+University</font></p>
+<p style="margin-top: 0; margin-bottom: 0"><font face="Times New Roman">Atlanta, 
+GA&nbsp; USA</font></p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+
+</BODY></HTML>

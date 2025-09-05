@@ -1,0 +1,98 @@
+# Document Cataloger .gitignore
+
+# Sensitive/Private Documents - Knowledge Base Structure (01-05)
+# Keep folder structure visible but exclude actual document files
+01_Cross_Cutting_Standards/*.pdf
+01_Cross_Cutting_Standards/*.docx
+01_Cross_Cutting_Standards/*.doc
+02_Sector_Standards_Policies/**/*.pdf
+02_Sector_Standards_Policies/**/*.docx
+02_Sector_Standards_Policies/**/*.doc
+03_Cross_Cutting_Assessment_Guidelines_Tools/**/*.pdf
+03_Cross_Cutting_Assessment_Guidelines_Tools/**/*.docx
+03_Cross_Cutting_Assessment_Guidelines_Tools/**/*.doc
+04_Sector_Assessment_Guidelines_Tools/**/*.pdf
+04_Sector_Assessment_Guidelines_Tools/**/*.docx
+04_Sector_Assessment_Guidelines_Tools/**/*.doc
+05_Gold_Standard_Examples/**/*.pdf
+05_Gold_Standard_Examples/**/*.docx
+05_Gold_Standard_Examples/**/*.doc
+
+# Other document formats that may contain sensitive content
+01_Cross_Cutting_Standards/*.ppt*
+02_Sector_Standards_Policies/**/*.ppt*
+03_Cross_Cutting_Assessment_Guidelines_Tools/**/*.ppt*
+04_Sector_Assessment_Guidelines_Tools/**/*.ppt*
+05_Gold_Standard_Examples/**/*.ppt*
+
+# Generated Catalogs (may contain sensitive metadata)
+kb_catalog*.csv
+catalog/
+**/catalog.csv
+00_Governance/kb_catalog_backup.csv
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environments
+venv/
+env/
+ENV/
+.env
+.venv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# System Files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Temporary Files
+tmp/
+temp/
+*.tmp
+
+# API Keys and Secrets
+.env
+secrets.json
+api_keys.txt
+
+# Ollama Models (large files)
+*.gguf
+
+# Test Outputs
+test_output/
+sample_catalogs/
+
+# Backup Files  
+*_backup.*
+*.bak
