@@ -2,9 +2,7 @@
   <img src="logo.png" alt="hum-ai-catalogr Logo" width="200">
 </div>
 
-# 🧠 hum-ai-catalogr
-
-## AI-Ready Knowledge Base Cataloging System
+# hum-ai-catalogr: AI-Ready Knowledge Base Cataloging System
 
 hum-ai-catalogr is an intelligent document cataloging system that transforms unstructured humanitarian document collections into structured, AI-ready knowledge bases. It leverages LLM-powered metadata extraction and standardized taxonomies to support fine-tuning, retrieval-augmented generation (RAG), and grounded AI applications.
 
