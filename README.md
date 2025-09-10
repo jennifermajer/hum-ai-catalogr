@@ -1,4 +1,4 @@
-![hum-ai-catalogr Logo](logo.png)
+<img src="logo.png" alt="hum-ai-catalogr Logo" width="200">
 
 # 🧠 hum-ai-catalogr
 
