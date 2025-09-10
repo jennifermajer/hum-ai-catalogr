@@ -1,4 +1,6 @@
-<img src="logo.png" alt="hum-ai-catalogr Logo" width="200">
+<div align="center">
+  <img src="logo.png" alt="hum-ai-catalogr Logo" width="200">
+</div>
 
 # 🧠 hum-ai-catalogr
 
