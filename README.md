@@ -1,3 +1,5 @@
+![hum-ai-catalogr Logo](logo.png)
+
 # 🧠 hum-ai-catalogr
 
 ## AI-Ready Knowledge Base Cataloging System
